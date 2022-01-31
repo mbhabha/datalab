@@ -154,6 +154,7 @@ COPY Model.ipynb /root/Desktop/data/samples/
 COPY Model_2.ipynb /root/Desktop/data/samples/
 COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 COPY desktop-background /etc/alternatives/
+COPY pip.conf /etc/
 
 COPY *.sh /opt/
 RUN chmod +x /opt/*.*
