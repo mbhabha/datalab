@@ -141,7 +141,7 @@ RUN ln -s /root/.nvm/versions/node/v10.18.0/lib/node_modules/@aggregion/gold-rec
 
 # Pycharm & minio
 ADD http://alfa.dmp.aggregion.com/pycharm-community-2021.2.3.tar.gz /opt/
-ADD https://dl.min.io/server/minio/release/linux-amd64/minio /opt/	
+ADD https://dl.min.io/server/minio/release/linux-amd64/archive/minio_20220128022816.0.0_amd64.deb /opt/
 WORKDIR /opt
 RUN tar -xzf /opt/pycharm-community-2021.2.3.tar.gz	
 RUN chmod +x /opt/minio
