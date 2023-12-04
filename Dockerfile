@@ -10,41 +10,40 @@ RUN apt-get update -y && \
     telnet \
     iputils-ping \
     htop \
-	firefox \
-	curl \
-	wget \
+    firefox \
+    curl \
+    wget \
     mc \
+    rsync \
     vim \
     gnome-tweak-tool \
     evince \
-	python3 \
-	python3-pip \
+    python3 \
+    python3-pip \
     python3-dev \
     python3-venv \
-	libreoffice \
-	ipython3 \
+    libreoffice \
+    ipython3 \
     gdebi \
-	tigervnc-standalone-server \
-	ubuntu-desktop \
+    tigervnc-standalone-server \
+    ubuntu-desktop \
     tigervnc-common \
-	python-numpy \
+    python-numpy \
     xfce4 xfce4-goodies \
     gdebi \
     lxde \
-	r-base-core \
-	ca-certificates \
+    r-base-core \
+    ca-certificates \
     supervisor && \
     rm -rf /var/lib/apt/lists/*
 # LOCALE
 RUN sed -i '/ru_RU.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen
-ENV LANG ru_RU.UTF-8  
-ENV LANGUAGE ru_RU:en  
-ENV LC_ALL ru_RU.UTF-8    
+ENV LANG ru_RU.UTF-8
+ENV LANGUAGE ru_RU:en
+ENV LC_ALL ru_RU.UTF-8
 # Python
 
-#RUN python3 -m venv dev-env -y
-#RUN source dev-env/bin/activate -y
 RUN pip3  install -U pip
 RUN pip3 install -U setuptools
 
@@ -52,7 +51,7 @@ RUN pip3 install -U setuptools
 RUN mkdir /opt/Code
 RUN cd /opt/Code
 WORKDIR /opt/Code
-#RUN source Code/bin/activate
+
 RUN pip3 install virtualenv
 RUN virtualenv Code
 
@@ -64,7 +63,7 @@ RUN pip3 uninstall notebook -y
 RUN pip3 install jupyter
 RUN pip3 install notebook
 RUN pip3 install ipython
-RUN pip3 install prompt_toolkit 
+RUN pip3 install prompt_toolkit
 
 # install Enveronment
 RUN pip3 install appdirs && pip3 install argon2-cffi && pip3 install attrs
@@ -125,11 +124,11 @@ RUN git clone https://github.com/novnc/noVNC /noVNC && \
     git clone https://github.com/novnc/websockify /noVNC/utils/websockify && \
     git -C /noVNC/utils/websockify checkout -b local f0bdb0a && \
     rm -rf /noVNC/.git /noVNC/utils/websockify/.git
-	
+
 WORKDIR /root/Desktop/data
-WORKDIR	/root/Desktop/data/samples
+WORKDIR /root/Desktop/data/samples
 WORKDIR /root/Desktop/data/import
-WORKDIR	/root/Desktop/data/export
+WORKDIR /root/Desktop/data/export
 RUN chmod +x /root/Desktop/data
 WORKDIR /root/Desktop
 COPY ./desktop/*.* /root/Desktop/
@@ -140,12 +139,14 @@ RUN npm i -g @aggregion/gold-record-find@latest
 RUN ln -s /root/.nvm/versions/node/v10.18.0/lib/node_modules/@aggregion/gold-record-find /root/Desktop
 
 # Pycharm & minio
-ADD http://alfa.dmp.aggregion.com/pycharm-community-2021.2.3.tar.gz /opt/
-ADD https://dl.min.io/server/minio/release/linux-amd64/archive/minio_20220128022816.0.0_amd64.deb /opt/
+ADD http://admin:agg123Q!@alfa.dmp.aggregion.com/pycharm-community-2023.2.1.tar.gz /opt/
+ADD http://admin:agg123Q!@alfa.dmp.aggregion.com/minio_20220128022816.0.0_amd64.deb /opt/
 WORKDIR /opt
-RUN tar -xzf /opt/pycharm-community-2021.2.3.tar.gz	
+RUN tar -xzf /opt/pycharm-community-2023.2.1.tar.gz
+RUN apt install /opt/minio_20220128022816.0.0_amd64.deb -y
+RUN cp /usr/local/bin/minio /opt/minio
 RUN chmod +x /opt/minio
-RUN ln -s /opt/pycharm-community-2021.2.3/bin/pycharm.sh /usr/local/bin/pycharm
+RUN ln -s /opt/pycharm-community-2023.2.1/bin/pycharm.sh /usr/local/bin/pycharm
 
 COPY README.md /root/Desktop/data/export/
 COPY CHANGELOG.md /root/Desktop/data/export/
@@ -155,21 +156,24 @@ COPY Model_2.ipynb /root/Desktop/data/samples/
 COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 COPY desktop-background /etc/alternatives/
 COPY pip.conf /etc/
-
-COPY *.sh /opt/
-RUN chmod +x /opt/*.*
+COPY *.jpg /opt/
 
 # R Setup
-ADD https://download1.rstudio.org/desktop/bionic/amd64/rstudio-1.4.1106-amd64.deb /opt/
+ADD http://admin:agg123Q!@alfa.dmp.aggregion.com/rstudio-2023.06.2-561-amd64.deb /opt/
 WORKDIR /opt/
-#RUN chmod +x *.deb
 RUN apt-get update -y
-RUN apt-get install -y 
-RUN	apt install libclang-dev -y  
-RUN	apt install libpq5 -y 
-RUN	apt install /opt/rstudio-1.4.1106-amd64.deb -y 
-RUN	chown _apt /var/lib/update-notifier/package-data-downloads/partial/
-RUN apt install /opt/rstudio-1.4.1106-amd64.deb -y	
+RUN apt-get install -y
+RUN apt install libclang-dev -y
+RUN apt install libpq5 -y
+RUN apt install /opt/rstudio-2023.06.2-561-amd64.deb -y
+RUN chown _apt /var/lib/update-notifier/package-data-downloads/partial/
+RUN apt install /opt/rstudio-2023.06.2-561-amd64.deb -y
+RUN git config --global http.sslVerify false
+
+RUN rm -rf /var/lib/apt/lists/*
+RUN rm -rf /opt/pycharm-community-2023.2.1.tar.gz
+RUN rm -rf /opt/*.deb
+
 
 ENV USER root
 
@@ -179,6 +183,6 @@ RUN mkdir /root/.vnc && \
     echo password | vncpasswd -f > /root/.vnc/passwd && \
     chmod 600 /root/.vnc/passwd && \
     touch /root/.Xauthority && \
-	update-alternatives --remove-all vncconfig
+    update-alternatives --remove-all vncconfig
 
 CMD ["/usr/bin/supervisord","-n"]

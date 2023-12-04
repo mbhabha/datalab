@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Gitlab
+Exec=firefox %u https://gitlab.gitlab.local
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=/opt/g.jpg
+Categories=WebBrowser;
+StartupNotify=true
+Actions=new-window;new-private-window;
