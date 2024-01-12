@@ -108,6 +108,8 @@ RUN pip3 install tenacity && pip3 install terminado && pip3 install testpath && 
 RUN pip3 install urllib3 && pip3 install wcwidth
 RUN pip3 install webencodings && pip3 install wheel && pip3 install widgetsnbextension
 RUN pip3 install xlrd && pip3 install zipp && pip3 install xgboost
+#MAGNIT
+RUN pip3 install pyarrow && pip3 install dask && pip3 install dash && pip3 install flask && pip3 install streamlit==1.10.0 && pip3 install sklearn && pip3 install nltk && pip3 install gensim==4.2.0 && pip3 install umap
 
 ENV NODE_OPTIONS="--max-old-space-size=32768"
 ENV NODE_VERSION=10.18.0
@@ -125,6 +127,7 @@ RUN git clone https://github.com/novnc/noVNC /noVNC && \
     git -C /noVNC/utils/websockify checkout -b local f0bdb0a && \
     rm -rf /noVNC/.git /noVNC/utils/websockify/.git
 
+#RUN sed -i 's/skin=default/skin=darkfar.ini/' ~/.config/mc/ini
 WORKDIR /root/Desktop/data
 WORKDIR /root/Desktop/data/samples
 WORKDIR /root/Desktop/data/import
@@ -139,14 +142,14 @@ RUN npm i -g @aggregion/gold-record-find@latest
 RUN ln -s /root/.nvm/versions/node/v10.18.0/lib/node_modules/@aggregion/gold-record-find /root/Desktop
 
 # Pycharm & minio
-ADD http://admin:agg123Q!@alfa.dmp.aggregion.com/pycharm-community-2023.2.1.tar.gz /opt/
-ADD http://admin:agg123Q!@alfa.dmp.aggregion.com/minio_20220128022816.0.0_amd64.deb /opt/
+COPY pycharm-community-2023.3.2.tar.gz /opt/
+COPY minio_20220128022816.0.0_amd64.deb /opt/
 WORKDIR /opt
-RUN tar -xzf /opt/pycharm-community-2023.2.1.tar.gz
+RUN tar -xzf /opt/pycharm-community-2023.3.2.tar.gz
 RUN apt install /opt/minio_20220128022816.0.0_amd64.deb -y
 RUN cp /usr/local/bin/minio /opt/minio
 RUN chmod +x /opt/minio
-RUN ln -s /opt/pycharm-community-2023.2.1/bin/pycharm.sh /usr/local/bin/pycharm
+RUN ln -s /opt/pycharm-community-2023.3.2/bin/pycharm.sh /usr/local/bin/pycharm
 
 COPY README.md /root/Desktop/data/export/
 COPY CHANGELOG.md /root/Desktop/data/export/
@@ -159,15 +162,15 @@ COPY pip.conf /etc/
 COPY *.jpg /opt/
 
 # R Setup
-ADD http://admin:agg123Q!@alfa.dmp.aggregion.com/rstudio-2023.06.2-561-amd64.deb /opt/
+COPY rstudio-1.4.1106-amd64.deb /opt/
 WORKDIR /opt/
 RUN apt-get update -y
 RUN apt-get install -y
 RUN apt install libclang-dev -y
 RUN apt install libpq5 -y
-RUN apt install /opt/rstudio-2023.06.2-561-amd64.deb -y
+RUN apt install /opt/rstudio-1.4.1106-amd64.deb -y
 RUN chown _apt /var/lib/update-notifier/package-data-downloads/partial/
-RUN apt install /opt/rstudio-2023.06.2-561-amd64.deb -y
+RUN apt install /opt/rstudio-1.4.1106-amd64.deb -y
 RUN git config --global http.sslVerify false
 
 RUN rm -rf /var/lib/apt/lists/*
